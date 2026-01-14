@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Analysis Flash Cards - MATH 105A</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #7b2cbf, #5a189a);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00c853, #009624);
+            color: #fff;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            transition: width 0.3s ease;
+        }
+
+        .card-counter {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+
+        .flashcard-container {
+            display: flex;
+            justify-content: center;
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .flashcard {
+            width: 100%;
+            max-width: 800px;
+            min-height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            min-height: 400px;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-front {
+            background: linear-gradient(145deg, #2d2d44, #1f1f35);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .card-back {
+            background: linear-gradient(145deg, #1f3a1f, #152815);
+            border: 2px solid rgba(0, 200, 83, 0.3);
+            transform: rotateY(180deg);
+        }
+
+        .card-label {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 0.9em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .card-content {
+            font-size: 1.15em;
+            line-height: 1.8;
+        }
+
+        .card-content h3 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .card-back .card-content h3 {
+            color: #00c853;
+        }
+
+        .card-content ul {
+            margin-left: 20px;
+        }
+
+        .card-content li {
+            margin-bottom: 10px;
+        }
+
+        .card-content code {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-content .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        .card-content strong {
+            color: #ffd700;
+        }
+
+        .hint {
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .section-filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .section-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .section-btn.active {
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            border-color: transparent;
+        }
+
+        .section-btn:hover {
+            border-color: #00d4ff;
+        }
+
+        .keyboard-hint {
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 20px;
+        }
+
+        .keyboard-hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 0 3px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .card-face {
+                padding: 25px;
+                min-height: 350px;
+            }
+
+            .card-content {
+                font-size: 1em;
+            }
+
+            .controls button {
+                padding: 10px 18px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Real Analysis Flash Cards</h1>
+        <p>MATH 105A - Winter 2026 - UC Santa Cruz</p>
+    </div>
+
+    <div class="section-filter">
+        <button class="section-btn active" data-section="all">All Cards</button>
+        <button class="section-btn" data-section="basics">Number Systems</button>
+        <button class="section-btn" data-section="cardinality">Cardinality</button>
+        <button class="section-btn" data-section="fields">Fields & Order</button>
+        <button class="section-btn" data-section="metric">Metric Spaces</button>
+        <button class="section-btn" data-section="completeness">Completeness</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn-primary" onclick="shuffleCards()">Shuffle Cards</button>
+        <button class="btn-secondary" onclick="resetCards()">Reset Order</button>
+        <button class="btn-success" onclick="flipCard()">Flip Card</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="card-counter">
+        Card <span id="currentCard">1</span> of <span id="totalCards">40</span>
+    </div>
+
+    <div class="flashcard-container">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+                <span class="card-label">Question</span>
+                <span class="card-number" id="cardNumber">#1</span>
+                <div class="card-content" id="questionContent"></div>
+                <p class="hint">Click card or press Space to flip</p>
+            </div>
+            <div class="card-face card-back">
+                <span class="card-label">Answer</span>
+                <span class="card-number" id="cardNumberBack">#1</span>
+                <div class="card-content" id="answerContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="prevCard()">←</button>
+        <button class="nav-btn" id="nextBtn" onclick="nextCard()">→</button>
+    </div>
+
+    <div class="keyboard-hint">
+        <kbd>←</kbd> Previous &nbsp;&nbsp;
+        <kbd>→</kbd> Next &nbsp;&nbsp;
+        <kbd>Space</kbd> Flip
+    </div>
+
+    <script>
+        const allCards = [
+            {
+                section: "basics",
+                question: `<h3>What are the standard number system sets N, Z, Q, and A?</h3>`,
+                answer: `<h3>Standard Number Systems</h3>
+                <ul>
+                    <li><strong>N</strong> (Natural numbers): {1, 2, 3, ...} - positive whole numbers</li>
+                    <li><strong>Z</strong> (Integers): {..., -2, -1, 0, 1, 2, ...} - all whole numbers</li>
+                    <li><strong>Q</strong> (Rationals): {a/b | a,b ∈ Z, b ≠ 0, gcd(a,b) = 1} - all fractions</li>
+                    <li><strong>A</strong> (Algebraic numbers): Solutions to polynomial equations with integer coefficients</li>
+                </ul>`
+            },
+            {
+                section: "basics",
+                question: `<h3>Prove that √2 is irrational.</h3>`,
+                answer: `<h3>Proof by Contradiction</h3>
+                <p>Assume √2 = a/b where gcd(a,b) = 1.</p>
+                <ul>
+                    <li>Squaring: a² = 2b²</li>
+                    <li>So a² is even → a is even → a = 2m</li>
+                    <li>Then 4m² = 2b² → 2m² = b² → b is even</li>
+                    <li>But then gcd(a,b) ≥ 2, contradicting gcd(a,b) = 1</li>
+                </ul>
+                <p><strong>Therefore √2 is irrational.</strong></p>`
+            },
+            {
+                section: "basics",
+                question: `<h3>What is an algebraic number? Give examples.</h3>`,
+                answer: `<h3>Algebraic Numbers</h3>
+                <p>A number <em>a</em> is <strong>algebraic</strong> if it's a solution to a polynomial equation with integer coefficients.</p>
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li>Any rational p/q (solves qx - p = 0)</li>
+                    <li><sup>n</sup>√p for any prime p (solves x<sup>n</sup> - p = 0)</li>
+                    <li>i = √-1 (solves x² + 1 = 0)</li>
+                    <li>√2 + √3 (solves x⁴ - 10x² + 1 = 0)</li>
+                </ul>`
+            },
+            {
+                section: "basics",
+                question: `<h3>What is a transcendental number? Give examples.</h3>`,
+                answer: `<h3>Transcendental Numbers</h3>
+                <p>A number that is <strong>NOT algebraic</strong> - it cannot be the root of any polynomial with integer coefficients.</p>
+                <p><strong>Examples:</strong> π and e are transcendental.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>What is the cardinality of a set?</h3>`,
+                answer: `<h3>Cardinality</h3>
+                <p>The <strong>cardinality</strong> of a set X, written |X|, is the "size" of X in terms of number of elements.</p>
+                <p>For finite sets, this is a natural number.</p>
+                <p>For infinite sets, cardinality is compared using <strong>bijections</strong>.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>When do two sets have the same cardinality?</h3>`,
+                answer: `<h3>Equal Cardinality</h3>
+                <p>Two sets A and B have the same cardinality (|A| = |B| or A ≈ B) if there exists a <strong>bijective function</strong> f: A → B.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>Define injective, surjective, and bijective functions.</h3>`,
+                answer: `<h3>Function Properties</h3>
+                <ul>
+                    <li><strong>Injective (one-to-one):</strong> If f(a) = f(b), then a = b<br>(distinct inputs → distinct outputs)</li>
+                    <li><strong>Surjective (onto):</strong> For every b ∈ B, there exists a ∈ A with f(a) = b<br>(every output is hit)</li>
+                    <li><strong>Bijective:</strong> Both injective AND surjective</li>
+                </ul>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>What is ℵ₀ (aleph null)?</h3>`,
+                answer: `<h3>Aleph Null (ℵ₀)</h3>
+                <p>ℵ₀ is the <strong>cardinality of the natural numbers N</strong>.</p>
+                <p>It represents the "smallest" infinity - the natural numbers are the smallest infinite set.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>Define countable and uncountable sets.</h3>`,
+                answer: `<h3>Countable vs Uncountable</h3>
+                <ul>
+                    <li><strong>Countable:</strong> A set is countable if it's finite OR has the same cardinality as N (can be listed)</li>
+                    <li><strong>Uncountable:</strong> A set that is NOT countable - cannot be put in bijection with N; has strictly more elements than N</li>
+                </ul>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>Prove that the integers Z are countable.</h3>`,
+                answer: `<h3>Z is Countable</h3>
+                <p>Define h: N → Z by:</p>
+                <ul>
+                    <li>h(x) = (x+1)/2 if x is odd</li>
+                    <li>h(x) = -x/2 - 1 if x is even</li>
+                </ul>
+                <p>This maps: 1→1, 2→0, 3→2, 4→-1, 5→3, 6→-2, ...</p>
+                <p>This is a <strong>bijection</strong>, so |Z| = |N|.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>State the theorem about countable unions.</h3>`,
+                answer: `<h3>Countable Union Theorem</h3>
+                <p>A <strong>countable union of countable sets is countable</strong>.</p>
+                <p>If A₁, A₂, A₃, ... are all countable sets, then</p>
+                <p style="text-align:center">⋃<sub>n=1</sub><sup>∞</sup> A<sub>n</sub> is countable.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>Are the rational numbers Q countable or uncountable?</h3>`,
+                answer: `<h3>Q is Countable</h3>
+                <p>Each positive rational a/b with gcd(a,b) = 1 can be paired with (a,b) ∈ N².</p>
+                <p>Since N² is countable (subset argument), Q⁺ is countable.</p>
+                <p>Then Q = Q⁻ ∪ {0} ∪ Q⁺ is a countable union of countable sets.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>State Cantor's Diagonal Argument.</h3>`,
+                answer: `<h3>Cantor's Diagonal Argument</h3>
+                <p>The set {0,1}<sup>N</sup> (all infinite 0-1 sequences) is <strong>uncountable</strong>.</p>
+                <p><strong>Proof:</strong></p>
+                <ul>
+                    <li>Assume countable, list all sequences: a₁, a₂, a₃, ...</li>
+                    <li>Create sequence b where b<sub>k</sub> ≠ a<sub>kk</sub> (flip the diagonal)</li>
+                    <li>Then b differs from every a<sub>k</sub> at position k</li>
+                    <li><strong>Contradiction!</strong> So {0,1}<sup>N</sup> is uncountable.</li>
+                </ul>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>Is R countable or uncountable?</h3>`,
+                answer: `<h3>R is Uncountable</h3>
+                <p>{0,1}<sup>N</sup> ≈ R (via binary/decimal expansions and CSB theorem).</p>
+                <p>Since {0,1}<sup>N</sup> is uncountable (Cantor diagonal), <strong>R is uncountable</strong>.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>State the Cantor-Schröder-Bernstein Theorem.</h3>`,
+                answer: `<h3>Cantor-Schröder-Bernstein (CSB) Theorem</h3>
+                <p>If there exist injective functions f: A → B and g: B → A, then there exists a <strong>bijection</strong> h: A → B.</p>
+                <p>In other words: If |A| ≤ |B| and |B| ≤ |A|, then |A| = |B|.</p>`
+            },
+            {
+                section: "fields",
+                question: `<h3>What is a binary operation on a set X?</h3>`,
+                answer: `<h3>Binary Operation</h3>
+                <p>A <strong>binary operation</strong> on X is a function from X × X to X.</p>
+                <p>It takes a pair of elements from X and outputs a single element in X.</p>
+                <p>The operation must be <strong>closed</strong> (stay within X).</p>`
+            },
+            {
+                section: "fields",
+                question: `<h3>What are the field axioms?</h3>`,
+                answer: `<h3>Field Axioms for (X, +, ·)</h3>
+                <p><strong>Addition:</strong></p>
+                <ul>
+                    <li>(A1) Associative: x + (y + z) = (x + y) + z</li>
+                    <li>(A2) Identity: x + 0 = x</li>
+                    <li>(A3) Inverses: x + (-x) = 0</li>
+                    <li>(A4) Commutative: x + y = y + x</li>
+                </ul>
+                <p><strong>Multiplication:</strong></p>
+                <ul>
+                    <li>(M1-M4) Same properties, with 1 as identity</li>
+                </ul>
+                <p><strong>Distribution:</strong> x(y + z) = xy + xz</p>`
+            },
+            {
+                section: "fields",
+                question: `<h3>What is a totally ordered set?</h3>`,
+                answer: `<h3>Totally Ordered Set</h3>
+                <p>A set X is <strong>totally ordered</strong> if the order < satisfies:</p>
+                <ul>
+                    <li><strong>Trichotomy:</strong> For a, b ∈ X, exactly one holds: a < b, a = b, or a > b</li>
+                    <li><strong>Transitivity:</strong> If a < b and b < c, then a < c</li>
+                </ul>`
+            },
+            {
+                section: "fields",
+                question: `<h3>What is a totally ordered field?</h3>`,
+                answer: `<h3>Totally Ordered Field</h3>
+                <p>A field (X, +, ·) is a <strong>totally ordered field</strong> if:</p>
+                <ul>
+                    <li>If a < b, then a + c < b + c (order preserved under addition)</li>
+                    <li>If a > 0 and b > 0, then ab > 0 (positive × positive = positive)</li>
+                </ul>
+                <p><strong>Q and R</strong> are both totally ordered fields.</p>`
+            },
+            {
+                section: "metric",
+                question: `<h3>Define the absolute value function.</h3>`,
+                answer: `<h3>Absolute Value</h3>
+                <p>For x ∈ R:</p>
+                <p style="text-align:center">|x| = max(x, -x) = { x if x ≥ 0, -x if x < 0 }</p>
+                <p><strong>Key property:</strong> |x| measures the distance of x from 0.</p>`
+            },
+            {
+                section: "metric",
+                question: `<h3>State the Triangle Inequality.</h3>`,
+                answer: `<h3>Triangle Inequality</h3>
+                <p>For x, y ∈ R:</p>
+                <ul>
+                    <li><strong>a)</strong> |x + y| ≤ |x| + |y|</li>
+                    <li><strong>b)</strong> ||x| - |y|| ≤ |x - y|</li>
+                </ul>`
+            },
+            {
+                section: "metric",
+                question: `<h3>What is a metric space?</h3>`,
+                answer: `<h3>Metric Space</h3>
+                <p>A <strong>metric space</strong> (X, d) is a set X with distance function d: X × X → [0, ∞) satisfying:</p>
+                <ul>
+                    <li>d(x, x) = 0 for all x</li>
+                    <li>d(x, y) = d(y, x) (symmetry)</li>
+                    <li>d(x, z) ≤ d(x, y) + d(y, z) (triangle inequality)</li>
+                </ul>
+                <p>R with d(x,y) = |x - y| is a metric space.</p>`
+            },
+            {
+                section: "metric",
+                question: `<h3>State the Archimedean Property.</h3>`,
+                answer: `<h3>Archimedean Property</h3>
+                <p>Two equivalent forms:</p>
+                <ul>
+                    <li>For every positive a, there exists n ∈ N with 0 < 1/n < a</li>
+                    <li>For every positive b, there exists n ∈ N with b < n</li>
+                </ul>
+                <p><strong>Meaning:</strong> There are no infinitely large or infinitesimally small numbers in Q or R.</p>`
+            },
+            {
+                section: "metric",
+                question: `<h3>What is the Density of Q theorem?</h3>`,
+                answer: `<h3>Density of Q</h3>
+                <p>For any x, y ∈ Q (or R) with x < y, there exists a rational number z such that <strong>x < z < y</strong>.</p>
+                <p><strong>Implication:</strong> Between any two numbers, there's always a rational. Q is "everywhere" in R.</p>`
+            },
+            {
+                section: "metric",
+                question: `<h3>What is an ε-neighborhood (ε-ball)?</h3>`,
+                answer: `<h3>ε-Neighborhood</h3>
+                <p>For metric space (X, d), the <strong>ε-neighborhood</strong> around point x is:</p>
+                <p style="text-align:center">B<sub>ε</sub>(x) = {y ∈ X | d(x, y) < ε}</p>
+                <p>For R: B<sub>ε</sub>(x) = {y ∈ R | |x - y| < ε} = (x - ε, x + ε)</p>`
+            },
+            {
+                section: "metric",
+                question: `<h3>What is a dense set vs. a discrete set?</h3>`,
+                answer: `<h3>Dense vs Discrete</h3>
+                <ul>
+                    <li><strong>Dense:</strong> Every ε-neighborhood of any point contains other points from the set. <em>Q is dense in R.</em></li>
+                    <li><strong>Discrete:</strong> Each point has an ε-neighborhood containing no other points from the set. <em>N and Z are discrete in R.</em></li>
+                </ul>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>What is a Dedekind cut?</h3>`,
+                answer: `<h3>Dedekind Cut</h3>
+                <p>A <strong>Dedekind cut</strong> is a partition of Q into sets (A, B) where:</p>
+                <ul>
+                    <li>A ≠ ∅ and B ≠ ∅</li>
+                    <li>A is closed downwards: if y ∈ A and x < y, then x ∈ A</li>
+                    <li>A has no greatest element</li>
+                </ul>
+                <p><strong>Example:</strong> A = {a ∈ Q | a² < 2 or a < 0} represents √2.</p>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>Define upper bound, lower bound, supremum, and infimum.</h3>`,
+                answer: `<h3>Bounds and Extrema</h3>
+                <ul>
+                    <li><strong>Upper bound</strong> of A: element a with x ≤ a for all x ∈ A</li>
+                    <li><strong>Lower bound</strong> of A: element a with x ≥ a for all x ∈ A</li>
+                    <li><strong>Supremum</strong> (sup A): Least upper bound - smallest upper bound</li>
+                    <li><strong>Infimum</strong> (inf A): Greatest lower bound - largest lower bound</li>
+                </ul>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>State the Least Upper Bound Property of R.</h3>`,
+                answer: `<h3>Least Upper Bound Property</h3>
+                <p>Every nonempty subset A of R that is bounded above has a <strong>least upper bound (supremum)</strong> that exists within R.</p>
+                <p>This is the <strong>Dedekind completeness</strong> of R - R has no "gaps."</p>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>What is Cauchy completeness?</h3>`,
+                answer: `<h3>Cauchy Completeness</h3>
+                <p>A space is <strong>Cauchy complete</strong> if every Cauchy sequence (where terms get arbitrarily close to each other) converges to a point within the space.</p>
+                <ul>
+                    <li><strong>R is Cauchy complete.</strong></li>
+                    <li><strong>Q is NOT</strong> (sequences can approach √2 without converging in Q).</li>
+                </ul>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>State the characterization theorem for supremum.</h3>`,
+                answer: `<h3>Supremum Characterization</h3>
+                <p>For a set A bounded above, α = sup A if and only if:</p>
+                <ul>
+                    <li>α is an upper bound of A</li>
+                    <li>For all ε > 0, there exists x ∈ A such that x > α - ε</li>
+                </ul>
+                <p><strong>Intuition:</strong> Nothing smaller than α can be an upper bound.</p>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>How do supremum and infimum interact with scalar multiplication?</h3>`,
+                answer: `<h3>Scalar Multiplication Rules</h3>
+                <p>For bounded set A and constant c:</p>
+                <p><strong>If c > 0:</strong></p>
+                <ul>
+                    <li>sup(cA) = c · sup(A)</li>
+                    <li>inf(cA) = c · inf(A)</li>
+                </ul>
+                <p><strong>If c < 0:</strong></p>
+                <ul>
+                    <li>sup(cA) = c · inf(A)</li>
+                    <li>inf(cA) = c · sup(A)</li>
+                </ul>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>What is the complete characterization of R?</h3>`,
+                answer: `<h3>Complete Characterization of R</h3>
+                <p><strong>R is a complete totally ordered field with the Archimedean property that contains Q as a dense subfield.</strong></p>
+                <p>R has:</p>
+                <ul>
+                    <li>Algebraic structure (field operations)</li>
+                    <li>Order structure (totally ordered)</li>
+                    <li>Completeness (no gaps)</li>
+                    <li>Archimedean property (no infinitesimals)</li>
+                    <li>Q is dense in R</li>
+                </ul>`
+            },
+            {
+                section: "completeness",
+                question: `<h3>What is the key difference between Dedekind and Cauchy completeness?</h3>`,
+                answer: `<h3>Dedekind vs Cauchy Completeness</h3>
+                <ul>
+                    <li><strong>Dedekind:</strong> Sees gaps via the ORDER structure (cuts)</li>
+                    <li><strong>Cauchy:</strong> Sees gaps via the METRIC structure (sequences)</li>
+                </ul>
+                <p>For Archimedean ordered fields (like R), these are <strong>equivalent</strong>.</p>
+                <p>For non-Archimedean fields, Cauchy completeness does NOT imply Dedekind completeness.</p>`
+            },
+            {
+                section: "basics",
+                question: `<h3>Why study R instead of just Q or A?</h3>`,
+                answer: `<h3>Why R?</h3>
+                <ul>
+                    <li><strong>Q and A have gaps</strong> - they're not complete</li>
+                    <li><strong>R is a continuum</strong> - can traverse between any two numbers</li>
+                    <li><strong>R allows calculus</strong> - limits, derivatives, integrals work</li>
+                    <li><strong>Approximation algorithms converge</strong> - Newton's method, binary search work</li>
+                    <li><strong>R contains all limits</strong> of rational sequences</li>
+                </ul>`
+            },
+            {
+                section: "basics",
+                question: `<h3>What makes R different from C (complex numbers)?</h3>`,
+                answer: `<h3>R vs C</h3>
+                <p>Both R and C are complete, but:</p>
+                <p><strong>In C:</strong> Every differentiable function is automatically analytic (equals its power series)</p>
+                <p><strong>In R:</strong> There exist infinitely differentiable functions that are NOT analytic</p>
+                <p><strong>Example:</strong> α(x) = e<sup>-1/x</sup> for x > 0, 0 for x ≤ 0</p>
+                <p>This makes R more "flexible" - <strong>bump functions</strong> exist in R but not C.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>What is the cardinality relationship between N, Z, Q, A, R?</h3>`,
+                answer: `<h3>Cardinality Hierarchy</h3>
+                <ul>
+                    <li>|N| = |Z| = |Q| = |A| = ℵ₀ (all <strong>countable</strong>)</li>
+                    <li>|R| > ℵ₀ (<strong>uncountable</strong>)</li>
+                </ul>
+                <p><strong>Key insight:</strong> R is a fundamentally larger infinity than Q, even though Q is dense in R.</p>`
+            },
+            {
+                section: "cardinality",
+                question: `<h3>What is the Well-Ordering Principle?</h3>`,
+                answer: `<h3>Well-Ordering Principle</h3>
+                <p>Every non-empty subset of N has a <strong>least element</strong>.</p>
+                <p>This is fundamental for:</p>
+                <ul>
+                    <li>Induction proofs</li>
+                    <li>Constructing sequences</li>
+                    <li>Many existence arguments</li>
+                </ul>`
+            }
+        ];
+
+        let cards = [...allCards];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function updateCard() {
+            const card = cards[currentIndex];
+            document.getElementById('questionContent').innerHTML = card.question;
+            document.getElementById('answerContent').innerHTML = card.answer;
+            document.getElementById('cardNumber').textContent = `#${currentIndex + 1}`;
+            document.getElementById('cardNumberBack').textContent = `#${currentIndex + 1}`;
+            document.getElementById('currentCard').textContent = currentIndex + 1;
+            document.getElementById('totalCards').textContent = cards.length;
+
+            const progress = ((currentIndex + 1) / cards.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === cards.length - 1;
+
+            // Reset flip state
+            isFlipped = false;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
+                updateCard();
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        }
+
+        function shuffleCards() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            currentIndex = 0;
+            updateCard();
+        }
+
+        function resetCards() {
+            cards = [...allCards];
+            currentIndex = 0;
+            updateCard();
+        }
+
+        function filterBySection(section) {
+            if (section === 'all') {
+                cards = [...allCards];
+            } else {
+                cards = allCards.filter(card => card.section === section);
+            }
+            currentIndex = 0;
+            updateCard();
+
+            document.querySelectorAll('.section-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.section === section) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Event listeners
+        document.querySelectorAll('.section-btn').forEach(btn => {
+            btn.addEventListener('click', () => filterBySection(btn.dataset.section));
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                flipCard();
+            } else if (e.code === 'ArrowRight') {
+                nextCard();
+            } else if (e.code === 'ArrowLeft') {
+                prevCard();
+            }
+        });
+
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
